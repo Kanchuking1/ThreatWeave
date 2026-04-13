@@ -4,6 +4,7 @@ GraphCyberAnalytics POC — main orchestrator.
 Usage:
     python main.py --seed                         # First run: load schema + seed data
     python main.py --seed --with-controls         # Full pipeline with controlled edges
+    python main.py --bloodhound --with-controls   # Load BloodHound AD dataset at scale
     python main.py --evaluate                     # Run evaluation only (data must exist)
     python main.py --source MQTT_Broker --target Actuator_Valve
 """
@@ -20,6 +21,7 @@ from risk_model import run_risk_model
 from pathfinding import run_pathfinding
 from analytics import run_analytics
 from evaluate import run_evaluation
+from load_bloodhound import load_bloodhound_data
 
 
 CYPHER_DIR = pathlib.Path(__file__).parent / "cypher"
@@ -65,13 +67,22 @@ def _seed_database(driver):
 
 def main():
     parser = argparse.ArgumentParser(description="GraphCyberAnalytics POC")
-    parser.add_argument("--seed", action="store_true", help="Load schema and seed data (first run)")
+    data_group = parser.add_mutually_exclusive_group()
+    data_group.add_argument("--seed", action="store_true", help="Load schema and Purdue ICS seed data")
+    data_group.add_argument("--bloodhound", action="store_true", help="Load BloodHound AD dataset (~953 nodes)")
     parser.add_argument("--with-controls", action="store_true", help="Create CONTROLLED_COMMUNICATES_WITH edges")
-    parser.add_argument("--source", default=config.DEFAULT_SOURCE, help="Source asset for pathfinding")
-    parser.add_argument("--target", default=config.DEFAULT_TARGET, help="Target asset for pathfinding")
+    parser.add_argument("--source", default=None, help="Source asset for pathfinding")
+    parser.add_argument("--target", default=None, help="Target asset for pathfinding")
     parser.add_argument("--evaluate", action="store_true", help="Run graph-vs-traditional evaluation")
     parser.add_argument("--skip-ingest", action="store_true", help="Skip API calls (use cached data)")
     args = parser.parse_args()
+
+    if args.bloodhound:
+        source = args.source or config.DEFAULT_SOURCE_BH
+        target = args.target or config.DEFAULT_TARGET_BH
+    else:
+        source = args.source or config.DEFAULT_SOURCE
+        target = args.target or config.DEFAULT_TARGET
 
     driver = GraphDatabase.driver(
         config.NEO4J_URI, auth=(config.NEO4J_USER, config.NEO4J_PASSWORD)
@@ -81,8 +92,11 @@ def main():
         # Step 0: verify
         _verify_connection(driver)
 
-        # Step 1: seed
-        if args.seed:
+        # Step 1: seed or load BloodHound
+        if args.bloodhound:
+            _run_cypher_file(driver, CYPHER_DIR / "schema.cypher")
+            load_bloodhound_data(driver)
+        elif args.seed:
             _seed_database(driver)
 
         # Step 2: ingest
@@ -93,14 +107,14 @@ def main():
         run_risk_model(driver, with_controls=args.with_controls)
 
         # Step 4: pathfinding
-        pf_results = run_pathfinding(driver, args.source, args.target)
+        pf_results = run_pathfinding(driver, source, target)
 
         # Step 5: analytics
         analytics_results = run_analytics(driver)
 
         # Step 6: evaluation
         if args.evaluate:
-            eval_results = run_evaluation(driver, args.source, args.target)
+            eval_results = run_evaluation(driver, source, target)
 
         print("=" * 60)
         print("  Pipeline complete.")

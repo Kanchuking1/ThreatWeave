@@ -26,6 +26,15 @@ YEN_K = 20
 DEFAULT_SOURCE = "MQTT_Broker"
 DEFAULT_TARGET = "Safety_PLC"
 
+# ── BloodHound dataset ──
+BLOODHOUND_JSON_URL = (
+    "https://raw.githubusercontent.com/neo4j-graph-examples/"
+    "cybersecurity/main/data/cybersecurity-json-data.json"
+)
+BLOODHOUND_JSON_LOCAL = "data_dumps/cybersecurity-json-data.json"
+DEFAULT_SOURCE_BH = "PiedadFlatley255@TestCompany.Local"
+DEFAULT_TARGET_BH = "DOMAIN ADMINS@TestCompany.Local"
+
 # ── CVSS vector factor mappings for attackCost (Eq. 5) ──
 # Maps CVSS v3.1 Access Complexity values to numeric factors
 F_AC = {"L": 0.1, "H": 0.5}
