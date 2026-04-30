@@ -2,8 +2,10 @@
 
 A proof-of-concept for graph-based cybersecurity risk assessment, grounded in
 the **BRIDG-ICS** framework (Nandiya et al., 2025), the **Neo4j "Graphs for
-Cybersecurity"** whitepaper, and evaluation metrics from Kaur, Mehta, Kapdi &
-Kumar's "Graph-Based Attack Simulation & Blast Radius Analysis."
+Cybersecurity"** whitepaper.
+
+This is done as a part of course project for CSCE 704: CyberSecurity Risk by
+Ramneek Kaur, Saksham Mehta and Wahib Kapdi.
 
 ## What it does
 
