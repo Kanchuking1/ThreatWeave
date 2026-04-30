@@ -142,7 +142,5 @@ export NVD_API_KEY=your-key-here    # optional, increases NVD rate limit
 - Nandiya, P. et al. "BRIDG-ICS: AI-Grounded Knowledge Graphs for Intelligent
   Threat Analytics in Industry 5.0 Cyber-Physical Systems." arXiv:2512.12112, 2025.
 - Voutila, D. et al. "Graphs for Cybersecurity." Neo4j Whitepaper, 2022.
-- Kaur, R., Mehta, S., Kapdi, W. S. & Kumar, S. "Graph-Based Attack Simulation
-  & Blast Radius Analysis." 2025.
 - neo4j-graph-examples/cybersecurity. BloodHound Active Directory dataset.
   https://github.com/neo4j-graph-examples/cybersecurity
