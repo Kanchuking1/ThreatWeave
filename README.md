@@ -1,4 +1,4 @@
-# GraphCyberAnalytics POC
+# ThreatWeave: Topology aware CVE patching prioritization
 
 A proof-of-concept for graph-based cybersecurity risk assessment, grounded in
 the **BRIDG-ICS** framework (Nandiya et al., 2025), the **Neo4j "Graphs for
